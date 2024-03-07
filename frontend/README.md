@@ -1,80 +1,70 @@
-![reactjs-vite-tailwindcss-boilerplate](https://user-images.githubusercontent.com/16243531/217138979-b854309c-4742-4275-a705-f9fec5158217.jpg)
+## vite-mui-ts boilerplate
 
-# React Tailwindcss Boilerplate build with Vite
+TypeScript + React + Redux + MUI + RRD + ESLint + Prettier
 
-This is a boilerplate build with Vite, React 18, TypeScript, Vitest, Testing Library, TailwindCSS 3, Eslint and Prettier.
+![vite-mui-ts](https://i.ibb.co/j8JSrhV/Screenshot-2023-07-06-121352.png)
 
-## What is inside?
+### Getting Started
 
-This project uses many tools like:
+#### Clone the repo
 
-- [Vite](https://vitejs.dev)
-- [ReactJS](https://reactjs.org)
-- [TypeScript](https://www.typescriptlang.org)
-- [Vitest](https://vitest.dev)
-- [Testing Library](https://testing-library.com)
-- [Tailwindcss](https://tailwindcss.com)
-- [Eslint](https://eslint.org)
-- [Prettier](https://prettier.io)
-
-## Getting Started
-
-### Install
-
-Create the project.
-
-```bash
-npx degit joaopaulomoraes/reactjs-vite-tailwindcss-boilerplate my-app
+```
+npx degit emre-cil/vite-mui-ts my-app
 ```
 
-Access the project directory.
-
-```bash
+```
 cd my-app
 ```
 
-Install dependencies.
+#### Install Dependencies
 
-```bash
+```
 pnpm install
 ```
 
-Serve with hot reload at <http://localhost:5173>.
+#### Run
 
-```bash
-pnpm run dev
+```
+pnpm dev
 ```
 
-### Lint
+#### Paths
 
-```bash
-pnpm run lint
+Application using absolute paths
+Example: '@/components/Counter/Counter';
+
+if you don't want to use you can remove these lines from
+
+> vite.config.ts
+
+```
+ resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
 ```
 
-### Typecheck
+> tsconfig.json
 
-```bash
-pnpm run typecheck
+```
+"paths": {
+      "@/*": ["./*"]
+    }
 ```
 
-### Build
 
-```bash
-pnpm run build
-```
+### Scripts
 
-### Test
+| Script        | Description                        |
+| ------------- | ---------------------------------- |
+| pnpm dev      | Runs the application.              |
+| pnpm build    | Create builds for the application. |
+| pnpm preview  | Runs the Vite preview              |
+| pnpm lint     | Display eslint errors              |
+| pnpm lint:fix | Fix the eslint errors              |
+| pnpm format   | Runs prettier for all files        |
+| pnpm test     | Run tests                          |
 
-```bash
-pnpm run test
-```
-
-View and interact with your tests via UI.
-
-```bash
-pnpm run test:ui
-```
-
-## License
-
-This project is licensed under the MIT License.
+### Check List
+````

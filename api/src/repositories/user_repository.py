@@ -5,49 +5,32 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from exceptions.database_exceptions import DatabaseExceptions
-from models.models import Employee
-from repositories.company_repository import CompanyRepository
+from models.models import User
+from api.src.repositories.stockbuy_repository import CompanyRepository
 
 logger = logging.getLogger(__name__)
 
 
-class EmployeeRepository:
+class UserRepository:
 
     @staticmethod
-    async def get_all(db: Session) -> List[Employee]:
+    async def get_by_id(id: str, db: Session) -> User:
         try:
-            return db.query(Employee).all()
+            user = db.query(User).filter(User.id == id).first()
         except Exception as e:
             logger.error(e, exc_info=True)
             DatabaseExceptions.throw_internal_server_error(e)
+        if not user:
+            logger.error(f"The User_id: {id} does not exist")
+            DatabaseExceptions.throw_not_found_error("User")
+        return user
 
     @staticmethod
-    async def get_all_for_company(company_id: str, db: Session):
-        await CompanyRepository.get_by_id(company_id, db)
+    async def create(user: User, db: Session):
         try:
-            return db.query(Employee).filter(Employee.company == company_id).all()
-        except Exception as e:
-            logger.error(e, exc_info=True)
-            DatabaseExceptions.throw_internal_server_error(e)
-
-    @staticmethod
-    async def get_by_id(id: str, db: Session) -> Employee:
-        try:
-            employee = db.query(Employee).filter(Employee.id == id).first()
-        except Exception as e:
-            logger.error(e, exc_info=True)
-            DatabaseExceptions.throw_internal_server_error(e)
-        if not employee:
-            logger.error(f"The employee_id: {id} does not exist")
-            DatabaseExceptions.throw_not_found_error("Employee")
-        return employee
-
-    @staticmethod
-    async def create(employee: Employee, db: Session):
-        try:
-            db.add(employee)
+            db.add(user)
             db.commit()
-            db.refresh(employee)
+            db.refresh(user)
         except IntegrityError as integrity_error:
             logger.error(integrity_error, exc_info=True)
             DatabaseExceptions.throw_db_integrity_error(integrity_error)
@@ -57,8 +40,8 @@ class EmployeeRepository:
 
     @staticmethod
     async def delete(id: str, db: Session) -> None:
-        """Deletes an employee record from DB"""
-        company = await EmployeeRepository.get_by_id(id, db)
+        """Deletes an User record from DB"""
+        company = await UserRepository.get_by_id(id, db)
         try:
             db.delete(company)
             db.commit()
@@ -67,10 +50,10 @@ class EmployeeRepository:
             DatabaseExceptions.throw_internal_server_error()
 
     @staticmethod
-    async def patch(employee: Employee, db: Session):
+    async def patch(user: User, db: Session):
         """Updates a company record in DB"""
         try:
-            db.add(employee)
+            db.add(user)
             db.commit()
         except IntegrityError as integrity_error:
             logger.error(integrity_error, exc_info=True)

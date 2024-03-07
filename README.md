@@ -1,9 +1,9 @@
 # 
 
-This challenges was made using the following projects as base:
+This challenge was made using the following projects as base:
 
 - [FastApiBase](https://github.com/nanlabs/backend-reference/tree/main/examples/fastapi-base)
-- [Vite boilerplate](https://github.com/joaopaulomoraes/reactjs-vite-tailwindcss-boilerplate)
+- [Vite boilerplate](https://github.com/emre-cil/vite-mui-ts)
 
 ---
 

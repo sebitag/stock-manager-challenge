@@ -35,6 +35,9 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
   frontend:
+    volumes:
+      - ./frontend/src:/react-vite-app/src
+      - /react-vite-app/node_modules
     build: ./frontend
     container_name: react_vite_app
     ports:

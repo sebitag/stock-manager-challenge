@@ -14,7 +14,7 @@ class UserRepository:
     @staticmethod
     async def get_by_id(id: str, db: Session) -> User:
         try:
-            user = db.query(User).filter_by(id = id)
+            user = db.query(User).filter_by(id = id).first()
         except Exception as e:
             logger.error(e, exc_info=True)
             DatabaseExceptions.throw_internal_server_error(e)

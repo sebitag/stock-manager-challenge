@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Login from '@/pages/Auth/Login';
 import Home from '@/pages/Home/Home';
 import AppBar from '@/components/AppBar/AppBar';
 import Buy from '@/pages/Buy/Buy';
@@ -16,7 +15,6 @@ const Routing = () => {
         <Route path="/buy" element={<Buy />} />
         <Route path="/sell" element={<Sell />} />
         <Route path="/balance" element={<Balance />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );

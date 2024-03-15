@@ -2,7 +2,6 @@ from pydantic import BaseModel, EmailStr
 
 class UserStockSchema(BaseModel):
     user_id: str
-    name: str
     symbol: str
     amount: int
 
@@ -18,7 +17,7 @@ class StockSchema(BaseModel):
     class Config:
         extra = "forbid"
 
-class BuyStockSchema(BaseModel):
+class StockTransactionSchema(BaseModel):
     user_id: str
     symbol: str
     amount: int

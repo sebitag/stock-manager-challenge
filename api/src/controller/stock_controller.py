@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from db.database import get_db
-from models.schemas.stock import BuyStockSchema, SellStockSchema, UserStockSchema, StockSchema
+from models.schemas.stock import StockTransactionSchema, SellStockSchema, UserStockSchema, StockSchema
 from services.stocks_service import StocksService
 
 router = APIRouter()
@@ -27,7 +27,7 @@ async def get_all(db: Session = Depends(get_db)):
     name="Buy stocks for user",
     response_model=UserStockSchema
 )
-async def buy(request: BuyStockSchema, db: Session = Depends(get_db)):
+async def buy(request: StockTransactionSchema, db: Session = Depends(get_db)):
     # get user balance
     user = await UserService.get_by_id(request.user_id, db)
 
@@ -46,12 +46,12 @@ async def buy(request: BuyStockSchema, db: Session = Depends(get_db)):
 
 
 @router.post(
-    "/sell/{user_id}/{symbol}",
+    "/sell",
     status_code=status.HTTP_200_OK,
     name="Sell user's stocks",
     response_model=UserStockSchema
 )
-async def sell(request: SellStockSchema, db: Session = Depends(get_db)):
+async def sell(request: StockTransactionSchema, db: Session = Depends(get_db)):
     # get user holdings
     # get stock price
     # update user holdings

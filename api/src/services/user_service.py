@@ -25,7 +25,7 @@ class UserService:
 
     @staticmethod
     async def add_balance(request: AddBalanceSchema, db: Session) -> User:
-        user = await UserRepository.get_by_id(request.id, db)
+        user = await UserRepository.get_by_id(request.userId, db)
         user.cash_balance += request.amount
         return await UserRepository.patch(user, db)
     

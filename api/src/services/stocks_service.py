@@ -4,7 +4,7 @@ from uuid import uuid4
 from sqlalchemy.orm import Session
 
 from models.models import StockTransaction
-from models.schemas.stock import BuyStockSchema, SellStockSchema, StockSchema
+from models.schemas.stock import StockTransactionSchema, SellStockSchema, StockSchema
 from repositories.stockbuy_repository import StockBuyRepository
 
 
@@ -21,7 +21,7 @@ class StocksService:
         return 1.1
 
     @staticmethod
-    async def buy(request: BuyStockSchema, db: Session) -> StockTransaction:
+    async def buy(request: StockTransactionSchema, db: Session) -> StockTransaction:
         stock = StockTransaction()
         stock.amount = request.amount
         stock.symbol = request.symbol
@@ -31,7 +31,7 @@ class StocksService:
         return stock
     
     @staticmethod
-    async def sell(request: SellStockSchema, db: Session) -> StockTransaction:
+    async def sell(request: StockTransactionSchema, db: Session) -> StockTransaction:
         stock = StockTransaction()
         stock.amount = -(request.amount) # negative or a new type?
         stock.symbol = request.symbol

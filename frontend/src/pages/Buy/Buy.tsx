@@ -7,6 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button, Modal, Box, Typography, TextField } from '@mui/material';
+import { useBuyStockMutation, useStocksQuery } from '@/services/stocks';
 
 const style = {
   position: 'absolute' as const,
@@ -24,7 +25,11 @@ const Buy = () => {
   const [selectedStock, setSelectedStock] = useState('');
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const handleBuy = () => alert('buying');
+  const handleBuy = () => {
+    alert('buying');
+  };
+
+  const { data: stocks } = useStocksQuery();
   const rows = [
     {
       name: 'UAN POWER CORP',

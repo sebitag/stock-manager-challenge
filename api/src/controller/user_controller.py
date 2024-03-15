@@ -22,7 +22,7 @@ async def get_balance(id:str, db: Session = Depends(get_db)):
 
 
 @router.post(
-    "/add-balance",
+    "/balance/add",
     status_code=status.HTTP_200_OK,
     name="Add balance to user",
 )

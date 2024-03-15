@@ -1,12 +1,12 @@
 from typing import List
-from api.src.models.schemas.stock import UserStockSchema
+from models.schemas.stock import UserStockSchema
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from db.database import get_db
-from api.src.models.schemas.user import AddBalanceSchema
-from api.src.services.user_service import UserService
+from models.schemas.user import AddBalanceSchema
+from services.user_service import UserService
 
 router = APIRouter()
 
@@ -27,7 +27,7 @@ async def get_balance(id:str, db: Session = Depends(get_db)):
     name="Add balance to user",
 )
 async def add_balance(request: AddBalanceSchema, db: Session = Depends(get_db)):
-    return await UserService.add_balance(id, request, db)
+    return await UserService.add_balance(request, db)
 
 
 @router.get(
@@ -37,5 +37,6 @@ async def add_balance(request: AddBalanceSchema, db: Session = Depends(get_db)):
     response_model=List[UserStockSchema]
 )
 async def get_user_holdings(user_id: str, db: Session = Depends(get_db)):
-    return await UserService.get_holdings(db, user_id)
+    user = await UserService.get_by_id(user_id, db)
+    return user.stocks
 

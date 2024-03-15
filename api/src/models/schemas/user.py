@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, HttpUrl
 
 class AddBalanceSchema(BaseModel):
-    user_id: str
+    id: str
     amount: float
 
     class Config:

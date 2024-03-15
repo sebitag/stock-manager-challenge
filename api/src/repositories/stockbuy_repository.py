@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from exceptions.database_exceptions import DatabaseExceptions
-from models.models import StockBuy
+from models.models import StockTransaction
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class StockBuyRepository:
     
     @staticmethod
-    async def create(stockBuy: StockBuy, db: Session) -> None:
+    async def create(stockBuy: StockTransaction, db: Session) -> None:
         """Creates a StockBuy record on the DB"""
         try:
             db.add(stockBuy)
@@ -28,37 +28,37 @@ class StockBuyRepository:
 
 
     @staticmethod
-    async def get_by_symbol(symbol: str, db: Session) -> List[StockBuy]:
+    async def get_by_symbol(symbol: str, db: Session) -> List[StockTransaction]:
         """Gets a single StockBuy's records from the DB by symbol"""
         try:
-            StockBuy = db.query(StockBuy).filter(StockBuy.symbol == symbol).first()
+            stockBuy = db.query(StockTransaction).filter_by(symbol = symbol).first()
         except Exception as e:
             logger.error(e, exc_info=True)
             DatabaseExceptions.throw_internal_server_error(e)
 
-        if not StockBuy:
+        if not StockTransaction:
             logger.error(f"The StockBuy_id: {id} does not exist")
             DatabaseExceptions.throw_not_found_error("StockBuy")
-        return StockBuy
+        return stockBuy
     
 
     @staticmethod
-    async def get_by_user_id(user_id: str, db: Session) -> List[StockBuy]:
+    async def get_by_user_id(user_id: str, db: Session) -> List[StockTransaction]:
         """Gets a single StockBuy's records from the DB by symbol"""
         try:
-            StockBuy = db.query(StockBuy).filter(StockBuy.user_id == user_id).first()
+            stockBuy = db.query(StockTransaction).filter_by(user_id = user_id).first()
         except Exception as e:
             logger.error(e, exc_info=True)
             DatabaseExceptions.throw_internal_server_error(e)
 
-        if not StockBuy:
+        if not stockBuy:
             logger.error(f"The StockBuy_id: {id} does not exist")
             DatabaseExceptions.throw_not_found_error("StockBuy")
-        return StockBuy
+        return stockBuy
 
 
     @staticmethod
-    async def patch(stockBuy: StockBuy, db: Session):
+    async def patch(stockBuy: StockTransaction, db: Session):
         """Updates a StockBuy record in DB"""
         try:
             db.add(stockBuy)

@@ -1,12 +1,10 @@
 import logging
-from typing import List
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from exceptions.database_exceptions import DatabaseExceptions
 from models.models import User
-from api.src.repositories.stockbuy_repository import CompanyRepository
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +14,7 @@ class UserRepository:
     @staticmethod
     async def get_by_id(id: str, db: Session) -> User:
         try:
-            user = db.query(User).filter(User.id == id).first()
+            user = db.query(User).filter_by(id = id)
         except Exception as e:
             logger.error(e, exc_info=True)
             DatabaseExceptions.throw_internal_server_error(e)
@@ -36,7 +34,7 @@ class UserRepository:
             DatabaseExceptions.throw_db_integrity_error(integrity_error)
         except Exception as e:
             logger.error(e, exc_info=True)
-            DatabaseExceptions.throw_internal_server_error()
+            DatabaseExceptions.throw_internal_server_error(e)
 
     @staticmethod
     async def delete(id: str, db: Session) -> None:
@@ -47,10 +45,10 @@ class UserRepository:
             db.commit()
         except Exception as e:
             logger.error(e, exc_info=True)
-            DatabaseExceptions.throw_internal_server_error()
+            DatabaseExceptions.throw_internal_server_error(e)
 
     @staticmethod
-    async def patch(user: User, db: Session):
+    async def patch(user: User, db: Session) -> User:
         """Updates a company record in DB"""
         try:
             db.add(user)
@@ -60,4 +58,5 @@ class UserRepository:
             DatabaseExceptions.throw_db_integrity_error(integrity_error)
         except Exception as e:
             logger.error(e, exc_info=True)
-            DatabaseExceptions.throw_internal_server_error()
+            DatabaseExceptions.throw_internal_server_error(e)
+        return user

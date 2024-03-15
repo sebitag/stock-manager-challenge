@@ -3,13 +3,12 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from models.models import StockBuy
-from api.src.models.schemas.stock import BuyStockSchema, StockSchema
-from api.src.repositories.stockbuy_repository import StockBuyRepository
+from models.models import StockTransaction
+from models.schemas.stock import BuyStockSchema, SellStockSchema, StockSchema
+from repositories.stockbuy_repository import StockBuyRepository
 
 
 class StocksService:
-
 
     @staticmethod
     async def get_all(db: Session) -> List[StockSchema]:
@@ -22,12 +21,21 @@ class StocksService:
         return 1.1
 
     @staticmethod
-    async def buy(request: BuyStockSchema, db: Session) -> StockBuy:
-        # await CompanyRepository.create(request, db)
-        stock = StockBuy(
-            # id=uuid4(),
-            user_id=request.user_id,
-            symbol=request.symbol,
-            amount=request.amount
-        )
-        StockBuyRepository.create(stock, db)
+    async def buy(request: BuyStockSchema, db: Session) -> StockTransaction:
+        stock = StockTransaction()
+        stock.amount = request.amount
+        stock.symbol = request.symbol
+        stock.user_id = request.user_id
+        stock.price = await StocksService.get_stock_price(request.symbol, db)
+        await StockBuyRepository.create(stock, db)
+        return stock
+    
+    @staticmethod
+    async def sell(request: SellStockSchema, db: Session) -> StockTransaction:
+        stock = StockTransaction()
+        stock.amount = -(request.amount) # negative or a new type?
+        stock.symbol = request.symbol
+        stock.user_id = request.user_id
+        stock.price = await StocksService.get_stock_price(request.symbol, db)
+        await StockBuyRepository.create(stock, db)
+        return stock

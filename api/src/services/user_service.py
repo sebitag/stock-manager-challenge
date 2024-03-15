@@ -1,7 +1,7 @@
 from typing import List
 from uuid import uuid4
-from api.src.models.schemas.user import AddBalanceSchema
-from api.src.repositories.user_repository import UserRepository
+from models.schemas.user import AddBalanceSchema
+from repositories.user_repository import UserRepository
 
 from sqlalchemy.orm import Session
 
@@ -19,4 +19,14 @@ class UserService:
 
     @staticmethod
     async def update(user: User, db: Session) -> User:
+        user = await UserRepository.patch(user, db)
+        return user    
+
+
+    @staticmethod
+    async def add_balance(request: AddBalanceSchema, db: Session) -> User:
+        user = await UserRepository.get_by_id(request.id, db)
+        user.cash_balance += request.amount
         return await UserRepository.patch(user, db)
+    
+    

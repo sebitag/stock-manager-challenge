@@ -2,18 +2,18 @@ from pydantic import BaseModel, EmailStr
 
 class UserStockSchema(BaseModel):
     user_id: str
-    name: str | None
-    symbol: str | None
-    amount: int | None
+    name: str
+    symbol: str
+    amount: int
 
     class Config:
         extra = "forbid"
 
 class StockSchema(BaseModel):
-    name: str | None
-    symbol: str | None
-    amount: int | None
-    price: float | None
+    name: str
+    symbol: str
+    amount: int
+    price: float
 
     class Config:
         extra = "forbid"

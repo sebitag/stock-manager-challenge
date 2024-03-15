@@ -1,12 +1,12 @@
 from typing import List
-from api.src.services.user_service import UserService
+from services.user_service import UserService
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from db.database import get_db
-from api.src.models.schemas.stock import BuyStockSchema, SellStockSchema, UserStockSchema, StockSchema
-from api.src.services.stocks_service import StocksService
+from models.schemas.stock import BuyStockSchema, SellStockSchema, UserStockSchema, StockSchema
+from services.stocks_service import StocksService
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ router = APIRouter()
 )
 async def get_all(db: Session = Depends(get_db)):
     # API hit to get all stocks
-    return await StocksService.get_all(id, db)
+    return await StocksService.get_all(db)
 
 
 @router.post(
@@ -29,7 +29,7 @@ async def get_all(db: Session = Depends(get_db)):
 )
 async def buy(request: BuyStockSchema, db: Session = Depends(get_db)):
     # get user balance
-    user = UserService.get_by_id(request.user_id, db)
+    user = await UserService.get_by_id(request.user_id, db)
 
     # get stock price
     stock_price = StocksService.get_stock_price(request.symbol, db)
@@ -37,10 +37,10 @@ async def buy(request: BuyStockSchema, db: Session = Depends(get_db)):
     if (user.cash_balance - stock_price) < 0:
         return "Insufficient balance"
     # update user holdings
-    StocksService.buy(request, db)
+    await StocksService.buy(request, db)
     # update user balance
     user.cash_balance -= stock_price
-    UserService.update(user, db)
+    await UserService.update(user, db)
 
     return user.cash_balance
 

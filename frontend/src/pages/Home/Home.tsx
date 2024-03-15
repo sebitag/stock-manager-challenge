@@ -1,6 +1,5 @@
 import React from 'react';
-import { Typography, Stack, Container } from '@mui/material';
-import Counter from '@/components/Counter/Counter';
+import { Typography, Container } from '@mui/material';
 
 const Home = () => {
   return (
@@ -8,7 +7,6 @@ const Home = () => {
       <Typography textAlign="center" variant="h2">
         Stock Manager
       </Typography>
-      <Counter />
     </Container>
   );
 };

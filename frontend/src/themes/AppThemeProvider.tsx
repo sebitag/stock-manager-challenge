@@ -1,5 +1,4 @@
 import { ThemeProvider, createTheme, responsiveFontSizes } from '@mui/material/styles';
-import { useAppSelector } from '@/app/store';
 import { PaletteMode } from '@mui/material';
 import React from 'react';
 
@@ -86,11 +85,10 @@ declare module '@mui/material/Typography' {
   }
 }
 export const AppThemeProvider: React.FC<Props> = ({ children }) => {
-  const mode = useAppSelector((state) => state.user.mode);
   const theme = responsiveFontSizes(
     createTheme({
       palette: {
-        mode: mode as PaletteMode,
+        mode: 'light',
         primary: {
           main: '#1c9c7c',
         },
@@ -130,27 +128,27 @@ export const AppThemeProvider: React.FC<Props> = ({ children }) => {
           Lightest: '#E5FFE5',
         },
         background: {
-          default: mode === 'dark' ? '#000000' : '#FCFBFA',
-          opposite: mode === 'dark' ? '#FCFBFA' : '#000000',
-          paper: mode === 'dark' ? '#131313' : '#FCFCFC',
+          default: '#FCFBFA',
+          opposite: '#000000',
+          paper: '#FCFCFC',
         },
         text: {
-          primary: mode === 'dark' ? '#FFFFFF' : '#000000',
+          primary: '#000000',
           secondary: '#999999',
           disabled: '#C3C1BD',
         },
 
         grey: {
-          50: mode === 'dark' ? 'hsl(0, 0%, 10%)' : 'hsl(0, 5%, 95%)',
-          100: mode === 'dark' ? 'hsl(0, 0%, 20%)' : 'hsl(0, 0%, 90%)',
-          200: mode === 'dark' ? 'hsl(0, 0%, 30%)' : 'hsl(0, 0%, 80%)',
-          300: mode === 'dark' ? 'hsl(0, 0%, 40%)' : 'hsl(0, 0%, 70%)',
-          400: mode === 'dark' ? 'hsl(0, 0%, 50%)' : 'hsl(0, 0%, 60%)',
-          500: mode === 'dark' ? 'hsl(0, 0%, 60%)' : 'hsl(0, 0%, 50%)',
-          600: mode === 'dark' ? 'hsl(0, 0%, 70%)' : 'hsl(0, 0%, 40%)',
-          700: mode === 'dark' ? 'hsl(0, 0%, 80%)' : 'hsl(0, 0%, 30%)',
-          800: mode === 'dark' ? 'hsl(0, 0%, 90%)' : 'hsl(0, 0%, 20%)',
-          900: mode === 'dark' ? 'hsl(0, 5%, 95%)' : 'hsl(0, 0%, 10%)',
+          50: 'hsl(0, 5%, 95%)',
+          100: 'hsl(0, 0%, 90%)',
+          200: 'hsl(0, 0%, 80%)',
+          300: 'hsl(0, 0%, 70%)',
+          400: 'hsl(0, 0%, 60%)',
+          500: 'hsl(0, 0%, 50%)',
+          600: 'hsl(0, 0%, 40%)',
+          700: 'hsl(0, 0%, 30%)',
+          800: 'hsl(0, 0%, 20%)',
+          900: 'hsl(0, 0%, 10%)',
         },
         gradient: {
           bronze: 'linear-gradient(180deg, #9C6D3E 0%, #E8C8A9 100%)',

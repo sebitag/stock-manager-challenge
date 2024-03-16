@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button, Modal, Box, Typography, TextField } from '@mui/material';
+import { Button, Modal, Box, Typography, TextField, CircularProgress } from '@mui/material';
 import { useBuyStockMutation, useStocksQuery } from '@/services/stocks';
 
 const style = {
@@ -23,30 +23,22 @@ const style = {
 const Buy = () => {
   const [open, setOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState('');
+  const [amount, setAmount] = useState(1);
+  const operation = useBuyStockMutation();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const handleBuy = () => {
-    alert('buying');
+  const handleBuy = (e: React.FormEvent) => {
+    e.preventDefault();
+    operation.mutate({ userId: 1, symbol: selectedStock, amount });
   };
 
-  const { data: stocks } = useStocksQuery();
-  const rows = [
-    {
-      name: 'UAN POWER CORP',
-      symbol: 'UPOW',
-      price: 100,
-    },
-    {
-      name: 'APPLE INC',
-      symbol: 'AAPL',
-      price: 100,
-    },
-    {
-      name: 'EXCO TECHNOLOGIES LTD',
-      symbol: 'EXCOF',
-      price: 100,
-    },
-  ];
+  const { data: stocks, isLoading } = useStocksQuery();
+  if (isLoading)
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <CircularProgress />
+      </Box>
+    );
   return (
     <>
       <TableContainer component={Paper} sx={{ maxWidth: '650px', margin: '16px' }}>
@@ -60,25 +52,26 @@ const Buy = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell>{row.symbol}</TableCell>
-                <TableCell>{row.price}</TableCell>
-                <TableCell align="right">
-                  <Button
-                    onClick={() => {
-                      setSelectedStock(row.symbol);
-                      handleOpen();
-                    }}
-                  >
-                    Buy
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {stocks &&
+              stocks.map((stock) => (
+                <TableRow key={stock.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row">
+                    {stock.name}
+                  </TableCell>
+                  <TableCell>{stock.symbol}</TableCell>
+                  <TableCell>{stock.price}</TableCell>
+                  <TableCell align="right">
+                    <Button
+                      onClick={() => {
+                        setSelectedStock(stock.symbol);
+                        handleOpen();
+                      }}
+                    >
+                      Buy
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -94,7 +87,17 @@ const Buy = () => {
             Buying: {selectedStock}
           </Typography>
           <form onSubmit={handleBuy}>
-            <TextField required id="amount" size="small" label="Amount" variant="outlined" />
+            <TextField
+              required
+              id="amount"
+              inputProps={{ min: '1' }}
+              type="number"
+              size="small"
+              label="Amount"
+              variant="outlined"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
             <Button type="submit">Buy</Button>
           </form>
         </Box>

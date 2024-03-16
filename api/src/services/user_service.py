@@ -12,7 +12,7 @@ from models.models import User
 class UserService:
 
     @staticmethod
-    async def get_by_id(id: str, db: Session) -> User:
+    async def get_by_id(id: int, db: Session) -> User:
         user = await UserRepository.get_by_id(id, db)
         return user
 
@@ -28,5 +28,5 @@ class UserService:
         user = await UserRepository.get_by_id(request.userId, db)
         user.cash_balance += request.amount
         return await UserRepository.patch(user, db)
-    
+        
     

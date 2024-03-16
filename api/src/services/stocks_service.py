@@ -1,24 +1,37 @@
+import os
 from typing import List
 from uuid import uuid4
 
+import aiohttp
 from sqlalchemy.orm import Session
-
 from models.models import StockTransaction
-from models.schemas.stock import StockTransactionSchema, SellStockSchema, StockSchema
+from models.schemas.stock import StockTransactionSchema, StockSchema
 from repositories.stockbuy_repository import StockBuyRepository
+from sqlalchemy.sql import functions
 
+FMP_API_KEY = os.getenv('FMP_API_KEY')
 
 class StocksService:
 
     @staticmethod
-    async def get_all(db: Session) -> List[StockSchema]:
-        # hit API to get all stocks with their prices
-        return []
+    async def get_all() -> List[StockSchema]:
+        # Limited to ten stocks to avoid overloading the API
+        url = f'https://financialmodelingprep.com/api/v3/quote/AAPL,MSFT,PHM,NFLX,RCL,AVGO,NRG,LRCX,AMZN,GE?apikey={str(FMP_API_KEY or "")}'
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    output = await response.json()
+        return output
 
     @staticmethod
-    async def get_stock_price(symbol: str, db: Session) -> float:
-        # hit API to get stock price by symbol
-        return 1.1
+    async def get_stock_price(symbol: str) -> float:
+        url = f'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={str(FMP_API_KEY or "")}'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    output = await response.json()
+        return output[0]['price']
 
     @staticmethod
     async def buy(request: StockTransactionSchema, db: Session) -> StockTransaction:
@@ -26,7 +39,7 @@ class StocksService:
         stock.amount = request.amount
         stock.symbol = request.symbol
         stock.user_id = request.user_id
-        stock.price = await StocksService.get_stock_price(request.symbol, db)
+        stock.price = await StocksService.get_stock_price(request.symbol)
         await StockBuyRepository.create(stock, db)
         return stock
     
@@ -36,6 +49,20 @@ class StocksService:
         stock.amount = -(request.amount) # negative or a new type?
         stock.symbol = request.symbol
         stock.user_id = request.user_id
-        stock.price = await StocksService.get_stock_price(request.symbol, db)
+        stock.price = await StocksService.get_stock_price(request.symbol)
         await StockBuyRepository.create(stock, db)
         return stock
+    
+    @staticmethod
+    async def get_user_holdings(user_id: int, db: Session) -> List[StockTransaction]:
+        
+        qry = db.query(StockTransaction.symbol, 
+                       StockTransaction.user_id,
+                functions.sum(StockTransaction.amount).label('amount')
+        ).filter(
+            StockTransaction.user_id == user_id
+        ).group_by(
+            StockTransaction.symbol, StockTransaction.user_id
+        ).all()
+
+        return qry

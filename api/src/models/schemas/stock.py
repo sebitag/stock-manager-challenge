@@ -1,34 +1,30 @@
 from pydantic import BaseModel, EmailStr
 
-class UserStockSchema(BaseModel):
-    user_id: str
+def to_camel(string: str) -> str:
+    words = string.split("_")
+    return words[0] + "".join(word.capitalize() for word in words[1:])
+
+class CamelModel(BaseModel):
+    class Config:
+        alias_generator = to_camel
+        allow_population_by_field_name = True
+
+class UserStockSchema(CamelModel):
+    user_id: int
     symbol: str
     amount: int
-
-    class Config:
-        extra = "forbid"
 
 class StockSchema(BaseModel):
     name: str
     symbol: str
-    amount: int
     price: float
 
-    class Config:
-        extra = "forbid"
-
-class StockTransactionSchema(BaseModel):
-    user_id: str
+class StockTransactionSchema(CamelModel):
+    user_id: int
     symbol: str
     amount: int
-
-    class Config:
-        extra = "forbid"
 
 class SellStockSchema(BaseModel):
-    user_id: str
+    user_id: int
     symbol: str
     amount: int
-
-    class Config:
-        extra = "forbid"

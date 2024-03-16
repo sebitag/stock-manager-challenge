@@ -1,8 +1,8 @@
 """Add mock user
 
-Revision ID: b51c5907641b
-Revises: d6f7640dd0c4
-Create Date: 2024-03-15 16:07:11.995122
+Revision ID: 3e7ba2cc7202
+Revises: bad0210abdb6
+Create Date: 2024-03-16 18:37:42.397973
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b51c5907641b'
-down_revision = 'd6f7640dd0c4'
+revision = '3e7ba2cc7202'
+down_revision = 'bad0210abdb6'
 branch_labels = None
 depends_on = None
 

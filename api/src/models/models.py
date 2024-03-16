@@ -7,14 +7,14 @@ from db.database import Base
 
 class User(Base):
     __tablename__ = 'user'
-    id = Column(String, primary_key=True, index=True, unique=True)
+    id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     cash_balance = Column(Float, nullable=False)
     stocks = relationship('StockTransaction')
     
 class StockTransaction(Base):
     __tablename__ = 'stock_transaction'
-    id = Column(String, primary_key=True, index=True, unique=True)
-    user_id = Column(String, ForeignKey('user.id'))
+    id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
     symbol = Column(String, nullable=False)
     amount = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)

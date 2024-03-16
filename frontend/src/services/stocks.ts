@@ -12,7 +12,7 @@ export const getStocks = async (): Promise<Stock[]> => {
   return data;
 };
 
-export const buyStock = async (userId: string, symbol: string, amount: number) => {
+export const buyStock = async ({ userId, symbol, amount }: { userId: number; symbol: string; amount: number }) => {
   await fetch(`${import.meta.env.VITE_API_URL}/stocks/buy`, {
     method: 'POST',
     headers: {
@@ -22,7 +22,7 @@ export const buyStock = async (userId: string, symbol: string, amount: number) =
   });
 };
 
-export const sellStock = async (userId: string, symbol: string, amount: number) => {
+export const sellStock = async ({ userId, symbol, amount }: { userId: number; symbol: string; amount: number }) => {
   await fetch(`${import.meta.env.VITE_API_URL}/stocks/sell`, {
     method: 'POST',
     headers: {
@@ -34,26 +34,24 @@ export const sellStock = async (userId: string, symbol: string, amount: number) 
 
 export const useStocksQuery = () => useQuery('stocks', getStocks);
 
-export const useBuyStockMutation = (userId: string, symbol: string, amount: number) => {
-  const queryClient = useQueryClient();
+export const useBuyStockMutation = () => {
+  // const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => buyStock(userId, symbol, amount),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({
-        queryKey: ['holdings', userId],
-      });
-    },
+    mutationFn: buyStock,
+    // onSuccess: (_, variables) => {
+    //   queryClient.invalidateQueries(['balance', variables.userId]);
+    //   return queryClient.invalidateQueries(['holdings', variables.userId]);
+    // },
   });
 };
 
-export const useSellStockMutation = (userId: string, symbol: string, amount: number) => {
+export const useSellStockMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => sellStock(userId, symbol, amount),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({
-        queryKey: ['holdings', userId],
-      });
+    mutationFn: sellStock,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries(['balance', variables.userId]);
+      return queryClient.invalidateQueries(['holdings', variables.userId]);
     },
   });
 };

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class UserRepository:
 
     @staticmethod
-    async def get_by_id(id: str, db: Session) -> User:
+    async def get_by_id(id: int, db: Session) -> User:
         try:
             user = db.query(User).filter_by(id = id).first()
         except Exception as e:
@@ -37,7 +37,7 @@ class UserRepository:
             DatabaseExceptions.throw_internal_server_error(e)
 
     @staticmethod
-    async def delete(id: str, db: Session) -> None:
+    async def delete(id: int, db: Session) -> None:
         """Deletes an User record from DB"""
         company = await UserRepository.get_by_id(id, db)
         try:

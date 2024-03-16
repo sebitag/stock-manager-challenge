@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from db.database import get_db
-from models.schemas.stock import StockTransactionSchema, SellStockSchema, UserStockSchema, StockSchema
+from models.schemas.stock import StockTransactionSchema, UserStockSchema, StockSchema
 from services.stocks_service import StocksService
 
 router = APIRouter()
@@ -16,45 +16,42 @@ router = APIRouter()
     name="Get all available stocks",
     response_model=List[StockSchema]
 )
-async def get_all(db: Session = Depends(get_db)):
-    # API hit to get all stocks
-    return await StocksService.get_all(db)
+async def get_all():
+    return await StocksService.get_all()
 
 
 @router.post(
     "/buy",
     status_code=status.HTTP_200_OK,
     name="Buy stocks for user",
-    response_model=UserStockSchema
 )
 async def buy(request: StockTransactionSchema, db: Session = Depends(get_db)):
-    # get user balance
     user = await UserService.get_by_id(request.user_id, db)
+    stock_price = await StocksService.get_stock_price(request.symbol)
+    new_balance = user.cash_balance - (stock_price * request.amount)
 
-    # get stock price
-    stock_price = StocksService.get_stock_price(request.symbol, db)
-    # if valid update user balance
-    if (user.cash_balance - stock_price) < 0:
+    if new_balance < 0:
         return "Insufficient balance"
-    # update user holdings
     await StocksService.buy(request, db)
-    # update user balance
-    user.cash_balance -= stock_price
+    
+    user.cash_balance = new_balance
     await UserService.update(user, db)
 
     return user.cash_balance
-
 
 @router.post(
     "/sell",
     status_code=status.HTTP_200_OK,
     name="Sell user's stocks",
-    response_model=UserStockSchema
 )
 async def sell(request: StockTransactionSchema, db: Session = Depends(get_db)):
-    # get user holdings
-    # get stock price
-    # update user holdings
-    # update user balance
-    return await StocksService.sell(request, db)
+    user = await UserService.get_by_id(request.user_id, db)
+    stock_price = await StocksService.get_stock_price(request.symbol)
+    new_balance = user.cash_balance + (stock_price * request.amount)
+
+    await StocksService.sell(request, db)
+    user.cash_balance = new_balance
+    await UserService.update(user, db)
+
+    return user.cash_balance
 

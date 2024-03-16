@@ -1,4 +1,5 @@
 from typing import List
+from services.stocks_service import StocksService
 from models.schemas.stock import UserStockSchema
 
 from fastapi import APIRouter, Depends, status
@@ -16,7 +17,7 @@ router = APIRouter()
     status_code=status.HTTP_200_OK,
     name="Get user balance",
 )
-async def get_balance(id:str, db: Session = Depends(get_db)):
+async def get_balance(id: int, db: Session = Depends(get_db)):
     user = await UserService.get_by_id(id, db)
     return user.cash_balance
 
@@ -29,14 +30,15 @@ async def get_balance(id:str, db: Session = Depends(get_db)):
 async def add_balance(request: AddBalanceSchema, db: Session = Depends(get_db)):
     return await UserService.add_balance(request, db)
 
-
 @router.get(
     "/holdings/{user_id}",
     status_code=status.HTTP_200_OK,
     name="Get user holdings",
-    response_model=List[UserStockSchema]
+    response_model=List[UserStockSchema],
 )
-async def get_user_holdings(user_id: str, db: Session = Depends(get_db)):
+async def get_user_holdings(user_id: int, db: Session = Depends(get_db)):
     user = await UserService.get_by_id(user_id, db)
-    return user.stocks
+    stocks = await StocksService.get_all()
+    
+    return await StocksService.get_user_holdings(user_id, db)
 

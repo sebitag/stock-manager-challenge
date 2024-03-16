@@ -1,7 +1,9 @@
 import { useAddBalanceMutation, useBalanceQuery } from '@/services/user';
 import { TextField, Button } from '@mui/material';
 import React, { useState } from 'react';
-const USER_ID = '1';
+
+const USER_ID = 1;
+
 const Balance = () => {
   const [inputValue, setInputValue] = useState('');
   const { data: balance } = useBalanceQuery(USER_ID);

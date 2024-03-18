@@ -1,5 +1,5 @@
 import { useAddBalanceMutation, useBalanceQuery } from '@/services/user';
-import { TextField, Button, Box, CircularProgress } from '@mui/material';
+import { TextField, Button, Box, CircularProgress, Typography } from '@mui/material';
 import React, { useState } from 'react';
 
 const USER_ID = 1;
@@ -25,8 +25,10 @@ const Balance = () => {
     );
   }
   return (
-    <div>
-      <h2>Current Balance: ${balance.toFixed(2)}</h2>
+    <Box m={2} display={'flex'} alignItems={'center'} flexDirection={'column'}>
+      <Typography variant="h2" pb={2}>
+        Current Balance: ${balance.toFixed(2)}
+      </Typography>
 
       <form onSubmit={handleAddBalance}>
         <TextField
@@ -34,11 +36,15 @@ const Balance = () => {
           id="amount"
           type="number"
           value={inputValue}
+          size="small"
+          sx={{ pr: 1 }}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <Button type="submit">Add Balance</Button>
+        <Button variant="contained" type="submit">
+          Add
+        </Button>
       </form>
-    </div>
+    </Box>
   );
 };
 

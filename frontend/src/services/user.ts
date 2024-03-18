@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 export type Holding = {
   symbol: string;
+  name: string;
   price: number;
   amount: number;
 };

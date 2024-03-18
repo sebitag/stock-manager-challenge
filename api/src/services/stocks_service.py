@@ -22,6 +22,8 @@ class StocksService:
             async with session.get(url) as response:
                 if response.status == 200:
                     output = await response.json()
+                else:
+                    raise Exception("Failed to fetch stocks. Response status:" + str(response.status))
         return output
 
     @staticmethod

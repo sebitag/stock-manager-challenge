@@ -40,13 +40,13 @@ function ResponsiveAppBar() {
             Stocks
           </Typography>
           <Box sx={{ flexGrow: 1, display: 'flex' }}>
-            <Link to="/buy">
+            <Link to="/buy" style={{ textDecoration: 'none' }}>
               <Button sx={{ my: 2, color: 'white', display: 'block' }}>Buy</Button>
             </Link>
-            <Link to="/sell">
+            <Link to="/sell" style={{ textDecoration: 'none' }}>
               <Button sx={{ my: 2, color: 'white', display: 'block' }}>sell</Button>
             </Link>
-            <Link to="/balance">
+            <Link to="/balance" style={{ textDecoration: 'none' }}>
               <Button sx={{ my: 2, color: 'white', display: 'block' }}>Balance</Button>
             </Link>
           </Box>

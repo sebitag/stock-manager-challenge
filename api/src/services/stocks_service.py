@@ -6,8 +6,8 @@ import aiohttp
 from sqlalchemy.orm import Session
 from models.models import StockTransaction
 from models.schemas.stock import StockTransactionSchema, StockSchema
-from repositories.stockbuy_repository import StockBuyRepository
-from sqlalchemy.sql import functions
+from repositories.stocktransaction_repository import StockTransactionRepository
+from sqlalchemy import func
 
 FMP_API_KEY = os.getenv('FMP_API_KEY')
 
@@ -40,29 +40,19 @@ class StocksService:
         stock.symbol = request.symbol
         stock.user_id = request.user_id
         stock.price = await StocksService.get_stock_price(request.symbol)
-        await StockBuyRepository.create(stock, db)
+        await StockTransactionRepository.create(stock, db)
         return stock
     
     @staticmethod
     async def sell(request: StockTransactionSchema, db: Session) -> StockTransaction:
         stock = StockTransaction()
-        stock.amount = -(request.amount) # negative or a new type?
+        stock.amount = -(request.amount)
         stock.symbol = request.symbol
         stock.user_id = request.user_id
         stock.price = await StocksService.get_stock_price(request.symbol)
-        await StockBuyRepository.create(stock, db)
+        await StockTransactionRepository.create(stock, db)
         return stock
     
     @staticmethod
     async def get_user_holdings(user_id: int, db: Session) -> List[StockTransaction]:
-        
-        qry = db.query(StockTransaction.symbol, 
-                       StockTransaction.user_id,
-                functions.sum(StockTransaction.amount).label('amount')
-        ).filter(
-            StockTransaction.user_id == user_id
-        ).group_by(
-            StockTransaction.symbol, StockTransaction.user_id
-        ).all()
-
-        return qry
+        return await StockTransactionRepository.get_user_holdings(user_id, db)

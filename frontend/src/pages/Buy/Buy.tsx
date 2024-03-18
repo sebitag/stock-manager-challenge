@@ -24,12 +24,13 @@ const Buy = () => {
   const [open, setOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState('');
   const [amount, setAmount] = useState(1);
+
   const operation = useBuyStockMutation();
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleBuy = (e: React.FormEvent) => {
+
+  const handleBuy = async (e: React.FormEvent) => {
     e.preventDefault();
-    operation.mutate({ userId: 1, symbol: selectedStock, amount });
+    await operation.mutateAsync({ userId: 1, symbol: selectedStock, amount });
+    setOpen(false);
   };
 
   const { data: stocks, isLoading } = useStocksQuery();
@@ -64,7 +65,7 @@ const Buy = () => {
                     <Button
                       onClick={() => {
                         setSelectedStock(stock.symbol);
-                        handleOpen();
+                        setOpen(true);
                       }}
                     >
                       Buy
@@ -78,7 +79,7 @@ const Buy = () => {
 
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -98,7 +99,9 @@ const Buy = () => {
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
             />
-            <Button type="submit">Buy</Button>
+            <Button disabled={operation.isLoading} type="submit">
+              Buy
+            </Button>
           </form>
         </Box>
       </Modal>

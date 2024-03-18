@@ -8,32 +8,28 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button, Modal, Box, Typography, TextField } from '@mui/material';
 import { useHoldingsQuery } from '@/services/user';
-import { useSellStockMutation } from '@/services/stocks';
+import { useSellStockMutation, useStocksQuery } from '@/services/stocks';
 
 const USER_ID = 1;
 
-const style = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
 const Sell = () => {
   const [open, setOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState('');
   const [amount, setAmount] = useState(1);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+
+  const { data: stocks } = useStocksQuery();
   const { data: holdings } = useHoldingsQuery(USER_ID);
-  const operation = useSellStockMutation();
-  const handleSell = (e: React.FormEvent) => {
+  const sellOperation = useSellStockMutation();
+
+  const handleSell = async (e: React.FormEvent) => {
     e.preventDefault();
-    operation.mutate({ userId: 1, symbol: selectedStock, amount });
+    await sellOperation.mutateAsync({ userId: 1, symbol: selectedStock, amount });
+    setOpen(false);
+  };
+
+  const getPrice = (selectedStock: string) => {
+    const stock = stocks?.find((stock) => stock.symbol === selectedStock);
+    return stock?.price;
   };
 
   return (
@@ -44,6 +40,7 @@ const Sell = () => {
             <TableRow>
               <TableCell>Symbol</TableCell>
               <TableCell>Amount</TableCell>
+              <TableCell>Price</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -53,11 +50,12 @@ const Sell = () => {
                 <TableRow key={row.symbol} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell>{row.symbol}</TableCell>
                   <TableCell>{row.amount}</TableCell>
+                  <TableCell>{getPrice(row.symbol)}</TableCell>
                   <TableCell align="right">
                     <Button
                       onClick={() => {
                         setSelectedStock(row.symbol);
-                        handleOpen();
+                        setOpen(true);
                       }}
                     >
                       Sell
@@ -71,13 +69,25 @@ const Sell = () => {
 
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box
+          sx={{
+            position: 'absolute' as const,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
           <Typography id="modal-modal-title" variant="h6" component="h2" pb={2}>
-            Selling: {selectedStock}
+            Selling: {selectedStock} Price: {getPrice(selectedStock)}
           </Typography>
           <form onSubmit={handleSell}>
             <TextField
@@ -91,7 +101,9 @@ const Sell = () => {
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
             />
-            <Button type="submit">Sell</Button>
+            <Button disabled={sellOperation.isLoading} type="submit">
+              Sell
+            </Button>
           </form>
         </Box>
       </Modal>

@@ -19,7 +19,7 @@ const Balance = () => {
 
   return (
     <div>
-      <h2>Current Balance: ${balance}</h2>
+      <h2>Current Balance: ${balance.toFixed(2)}</h2>
 
       <form onSubmit={handleAddBalance}>
         <TextField

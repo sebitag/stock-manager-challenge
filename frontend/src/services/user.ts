@@ -35,7 +35,6 @@ export const useBalanceQuery = (userId: number) => useQuery(['balance', userId],
 export const useHoldingsQuery = (userId: number) => useQuery(['holdings', userId], () => getHoldings(userId));
 
 export const useAddBalanceMutation = () => {
-  // todo: add optimistic updates
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addBalance,

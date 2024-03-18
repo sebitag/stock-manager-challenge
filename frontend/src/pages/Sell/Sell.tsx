@@ -59,6 +59,7 @@ const Sell = () => {
               <TableCell align="center">Symbol</TableCell>
               <TableCell align="center">Holding</TableCell>
               <TableCell align="center">Current Price</TableCell>
+              <TableCell align="center">Total asset value</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -69,6 +70,7 @@ const Sell = () => {
                   <TableCell align="center">{stock.symbol}</TableCell>
                   <TableCell align="center">{stock.amount}</TableCell>
                   <TableCell align="center">${getPrice(stock.symbol)?.toFixed(2)}</TableCell>
+                  <TableCell align="center">${((getPrice(stock.symbol) ?? 0) * stock.amount).toFixed(2)}</TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"

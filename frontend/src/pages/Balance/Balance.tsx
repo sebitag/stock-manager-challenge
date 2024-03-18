@@ -1,12 +1,12 @@
 import { useAddBalanceMutation, useBalanceQuery } from '@/services/user';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Box, CircularProgress } from '@mui/material';
 import React, { useState } from 'react';
 
 const USER_ID = 1;
 
 const Balance = () => {
   const [inputValue, setInputValue] = useState('');
-  const { data: balance } = useBalanceQuery(USER_ID);
+  const { data: balance, isLoading } = useBalanceQuery(USER_ID);
   const operation = useAddBalanceMutation();
 
   const handleAddBalance = () => {
@@ -17,6 +17,13 @@ const Balance = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <div>
       <h2>Current Balance: ${balance.toFixed(2)}</h2>

@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button, Modal, Box, Typography, TextField } from '@mui/material';
+import { Button, Modal, Box, Typography, TextField, CircularProgress } from '@mui/material';
 import { useHoldingsQuery } from '@/services/user';
 import { useSellStockMutation, useStocksQuery } from '@/services/stocks';
 
@@ -17,8 +17,8 @@ const Sell = () => {
   const [selectedStock, setSelectedStock] = useState('');
   const [amount, setAmount] = useState(1);
 
-  const { data: stocks } = useStocksQuery();
-  const { data: holdings } = useHoldingsQuery(USER_ID);
+  const { data: stocks, isLoading: loadingStocks } = useStocksQuery();
+  const { data: holdings, isLoading: loadingHoldings } = useHoldingsQuery(USER_ID);
   const sellOperation = useSellStockMutation();
 
   const handleSell = async (e: React.FormEvent) => {
@@ -31,6 +31,14 @@ const Sell = () => {
     const stock = stocks?.find((stock) => stock.symbol === selectedStock);
     return stock?.price;
   };
+
+  if (loadingStocks || loadingHoldings) {
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <>
